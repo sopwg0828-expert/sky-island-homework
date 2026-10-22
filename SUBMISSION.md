@@ -25,8 +25,8 @@ docs/submission/BRIEF-staged-before-submission.md 與 VERIFY-staged-before-submi
 ## 已知待完成與待驗證
 
 - 整理開始時：STEP 0～3 的 29 項自動測試通過，紀錄在 docs/submission/baseline-tests.txt。
-- 第一批 STEP 4「放回方塊」已補齊：8 項測試先失敗並提交，再實作為通過。最終共 37 項自動測試通過，詳見 docs/submission/final-tests.txt。瀏覽器已驗證零材料不能放，以及挖、撿、放後數量從 0→1→0；完整人工驗收狀態仍以 PLANS.md 為準。
-- 第 2 批目前包含景觀基礎；水流動畫與搭橋到對岸未完成，保留為未完成項目，不勾選通過。
+- 第一批 STEP 4「放回方塊」已補齊：8 項測試先失敗並提交，再實作為通過。後續修正島邊向空隙延伸橋面，最終共 42 項自動測試通過，詳見 docs/submission/final-tests.txt。瀏覽器已驗證零材料不能放、挖撿放數量 0→1→0、橋面綠色預覽及延伸一格後走上去；完整人工驗收狀態仍以 PLANS.md 為準。
+- 第 2 批目前包含景觀基礎；水流動畫未完成。搭橋到對岸已通過使用實際雙島地形的自動測試，但完整使用者親自往返驗收尚未完成，不自行勾選 VERIFY.md。
 - 學校舊電腦／CPU 或內顯的全螢幕 30 FPS 要求尚無目標設備實測，列為待驗證。
 - 詳細狀態以 PLANS.md 與實際測試結果為準；不自行勾選使用者的 VERIFY.md。
 

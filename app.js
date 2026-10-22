@@ -1,7 +1,7 @@
 import * as THREE from './vendor/three.module.js';
 import {createWorld,createPlayer,tickPlayer,movement,exposedFaces,FACES} from './world.js';
 import {createCollection,advanceMining,spawnDrop,tickDrops,resetCollection} from './collection.js';
-import {placeBlock} from './placement.js';
+import {placeBlock,bridgeTarget} from './placement.js';
 
 const $=id=>document.getElementById(id);
 const canvas=$('world'),world=createWorld(),player=createPlayer();
@@ -13,10 +13,13 @@ const dropMeshes=new Map(),dropMaterials={},crackTextures=[];
 const dropGeometry=new THREE.BoxGeometry(.34,.34,.34);
 const selection=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1.008,1.008,1.008)),new THREE.LineBasicMaterial({color:'#fff7c9',transparent:true,opacity:.9}));
 const cracks=new THREE.Mesh(new THREE.BoxGeometry(1.006,1.006,1.006),new THREE.MeshBasicMaterial({transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2}));
+const placementPreview=new THREE.Mesh(new THREE.BoxGeometry(.995,.995,.995),new THREE.MeshBasicMaterial({color:'#6ed28c',transparent:true,opacity:.35,depthWrite:false}));
+placementPreview.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1.005,1.005,1.005)),new THREE.LineBasicMaterial({color:'#e4ffcf'})));
+placementPreview.visible=false;
 selection.visible=false;cracks.visible=false;cracks.renderOrder=2;
 const keys=new Set(),touch=new Set();
 const scene=new THREE.Scene();
-scene.add(selection,cracks);
+scene.add(selection,cracks,placementPreview);
 scene.background=new THREE.Color('#bfe0f4');
 scene.fog=new THREE.Fog('#bfe0f4',75,145);
 const camera=new THREE.PerspectiveCamera(44,1,.08,180);
@@ -86,7 +89,7 @@ function overview(){
 }
 function active(value){
   running=value;keys.clear();touch.clear();dragging=false;miningHeld=false;
-  advanceMining(world,collection,null,false,0);selection.visible=false;cracks.visible=false;
+  advanceMining(world,collection,null,false,0);selection.visible=false;cracks.visible=false;placementPreview.visible=false;
   $('welcome').hidden=value;$('crosshair').hidden=!value;$('pause').hidden=!value;$('walk-guide').hidden=!value;
   $('inventory').hidden=!value;$('mining-panel').hidden=!value;
   $('touch-controls').hidden=!value||!matchMedia('(pointer:coarse)').matches;
@@ -103,9 +106,9 @@ function selectMaterial(type){
   document.querySelectorAll('[data-material]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.material)===type)));
 }
 function tryPlace(){
-  const target=currentTarget();
+  const target=currentTarget()||bridgeTarget(world,player,raycaster.ray);
   if(!collection.inventory[selectedType]){notice(`${names[selectedType]}不足，先挖掘並拾取材料。`);return;}
-  if(!target){notice('請對準 4.5 格內的方塊表面，再按右鍵放置。');return;}
+  if(!target){notice('到島邊往前下方看，對準與島相連的下一格，再按右鍵延伸橋面。');return;}
   if(placeBlock(world,collection,player,target,target.normal,selectedType)){
     buildTerrain(atlas);updateInventory();advanceMining(world,collection,null,false,0);cracks.visible=false;
     notice(`放置${names[selectedType]}，材料 −1`);
@@ -135,6 +138,9 @@ function currentTarget(){
 }
 function miningFrame(dt){
   const target=currentTarget();
+  const bridge=!target?bridgeTarget(world,player,raycaster.ray):null;
+  placementPreview.visible=!!bridge&&collection.inventory[selectedType]>0;
+  if(placementPreview.visible)placementPreview.position.set(bridge.x+bridge.normal.x+.5,bridge.y+.5,bridge.z+bridge.normal.z+.5);
   selection.visible=!!target;
   if(target)selection.position.set(target.x+.5,target.y+.5,target.z+.5);
   const broken=advanceMining(world,collection,target,miningHeld,dt);
@@ -145,10 +151,10 @@ function miningFrame(dt){
     const texture=crackTextures[collection.mining.stage];
     if(cracks.material.map!==texture){cracks.material.map=texture;cracks.material.needsUpdate=true;}
   }
-  $('mining-label').textContent=target?`${names[target.type]} · 按住左鍵 ${target.type===3?'2':'0.8'} 秒`:'把準星移到附近的方塊';
+  $('mining-label').textContent=target?`${names[target.type]} · 按住左鍵 ${target.type===3?'2':'0.8'} 秒`:bridge?'島邊搭橋 · 右鍵放出下一格':'把準星移到附近的方塊';
   const percent=Math.round(collection.mining.progress*100);
   $('mining-progress').style.width=percent+'%';$('mining-meter').setAttribute('aria-valuenow',percent);
-  $('mining-hint').textContent=percent>0?'持續按住，放開就要重挖':target?'挖碎後，走近掉落的小方塊就能收進背包':'按住右鍵拖曳轉向，也可以用方向鍵';
+  $('mining-hint').textContent=percent>0?'持續按住，放開就要重挖':bridge?'綠色方塊是橋面位置；放一格、走一格再繼續':target?'挖碎後，走近掉落的小方塊就能收進背包':'搭橋時到島邊，往前下方的空隙看';
   const picked=tickDrops(world,collection,player,dt);
   if(picked.length){updateInventory();notice(picked.map(type=>`${names[type]} +1`).join('、'));}
   updateDrops();
