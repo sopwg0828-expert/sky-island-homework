@@ -1,0 +1,47 @@
+✖ STEP 2：一個挖掉事件產生一個同種類掉落物 (0.5088ms)
+✖ STEP 2：掉落物彈起、旋轉，兩秒內落在地面上且不穿地 (0.1733ms)
+✖ STEP 2：下方沒有地面會繼續掉落，不在空中停住 (0.0975ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 0
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71.1534
+
+✖ failing tests:
+
+test at tests\step2.test.mjs:6:1
+✖ STEP 2：一個挖掉事件產生一個同種類掉落物 (0.5088ms)
+  Error: 蒐集狀態尚未實作
+      at createCollection (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/collection.js:1:42)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step2.test.mjs:7:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at tests\step2.test.mjs:10:1
+✖ STEP 2：掉落物彈起、旋轉，兩秒內落在地面上且不穿地 (0.1733ms)
+  Error: 蒐集狀態尚未實作
+      at createCollection (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/collection.js:1:42)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step2.test.mjs:11:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests\step2.test.mjs:16:1
+✖ STEP 2：下方沒有地面會繼續掉落，不在空中停住 (0.0975ms)
+  Error: 蒐集狀態尚未實作
+      at createCollection (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/collection.js:1:42)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step2.test.mjs:17:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

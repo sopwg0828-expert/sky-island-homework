@@ -1,0 +1,38 @@
+✔ STEP 3：一格內的掉落物先飛向玩家，再消失且材料只加一 (5.7229ms)
+✔ STEP 3：三格以上不會被吸走 (3.0606ms)
+✔ STEP 3：上下隔很遠不會隔著地形吸走 (0.6247ms)
+✔ STEP 3：撿石頭不會改變泥土數量 (0.4112ms)
+✔ STEP 3：挖五個、掉五個、撿五個，數字剛好加五 (1.4487ms)
+✔ STEP 0 重設：清除背包、掉落物及挖掘進度 (1.6976ms)
+✖ STEP 3：挖出一格深的坑，站在坑旁仍能撿起材料 (1.7326ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 6
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 169.5994
+
+✖ failing tests:
+
+test at tests\step3.test.mjs:42:1
+✖ STEP 3：挖出一格深的坑，站在坑旁仍能撿起材料 (1.7326ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step3.test.mjs:48:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
