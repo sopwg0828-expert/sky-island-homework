@@ -33,4 +33,6 @@ docs/submission/BRIEF-staged-before-submission.md 與 VERIFY-staged-before-submi
 
 ## GitHub 與交件
 
-儲存庫網址尚待建立及上傳成功後填入；不能以本機網址或壓縮檔冒充 GitHub repo 連結。完成後由使用者把儲存庫連結提交到老師指定的作業入口。
+公開儲存庫：https://github.com/sopwg0828-expert/sky-island-homework
+
+保留本機原有的真實版本紀錄一併上傳。由使用者把上述儲存庫連結提交到老師指定的作業入口；遊戲本機網址與壓縮檔不是繳交用的 repo 連結。
