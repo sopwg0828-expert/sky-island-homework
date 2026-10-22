@@ -1,0 +1,60 @@
+✖ 橋面修正：站島邊朝空隙看，能選到與島相連的下一格 (1.0298ms)
+✖ 橋面修正：不能在與島不相連的遠方空中生出方塊 (0.233ms)
+✖ 橋面修正：逐格放五塊，橋面連續、材料減五，而且走上去不掉落 (0.2741ms)
+✖ 橋面修正：邊界外、已有方塊或超過可放距離時不提供預覽 (0.1664ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 155.5144
+
+✖ failing tests:
+
+test at tests\bridge.test.mjs:8:1
+✖ 橋面修正：站島邊朝空隙看，能選到與島相連的下一格 (1.0298ms)
+  Error: 島邊朝空隙延伸橋面的判定尚未實作
+      at bridgeTarget (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:2:38)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/bridge.test.mjs:10:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at tests\bridge.test.mjs:16:1
+✖ 橋面修正：不能在與島不相連的遠方空中生出方塊 (0.233ms)
+  Error: 島邊朝空隙延伸橋面的判定尚未實作
+      at bridgeTarget (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:2:38)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/bridge.test.mjs:18:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests\bridge.test.mjs:21:1
+✖ 橋面修正：逐格放五塊，橋面連續、材料減五，而且走上去不掉落 (0.2741ms)
+  Error: 島邊朝空隙延伸橋面的判定尚未實作
+      at bridgeTarget (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:2:38)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/bridge.test.mjs:25:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests\bridge.test.mjs:34:1
+✖ 橋面修正：邊界外、已有方塊或超過可放距離時不提供預覽 (0.1664ms)
+  Error: 島邊朝空隙延伸橋面的判定尚未實作
+      at bridgeTarget (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:2:38)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/bridge.test.mjs:36:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

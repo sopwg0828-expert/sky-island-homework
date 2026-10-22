@@ -1,4 +1,5 @@
 import {SIZE,getBlock} from './world.js';
+export function bridgeTarget(){throw new Error('島邊朝空隙延伸橋面的判定尚未實作');}
 export function placeBlock(world,state,player,target,normal,type){
   if(!target||!normal||![1,2,3].includes(type)||!(state.inventory[type]>0))return false;
   if(!Number.isFinite(target.distance)||target.distance>4.5)return false;
