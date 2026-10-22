@@ -9,4 +9,5 @@
 @media(max-width:600px){.walk-guide{top:70px;max-width:275px}.walk-guide strong{font-size:12px}.mining-panel{bottom:143px;padding:8px 12px;width:290px}.mining-panel strong{font-size:12px}.inventory{bottom:50px}.inventory-slot{min-width:80px;padding:5px 8px}.touch-controls{bottom:243px}.walking .bottom-bar{padding-top:14px}.walking .notice{top:41%;width:max-content}.walking .stage{display:none}}
 .walking .topbar{background:linear-gradient(#eef7f9eb,transparent)}
 .inventory-slot{pointer-events:auto;color:var(--ink)}.inventory-slot[aria-pressed="true"]{border:2px solid #367a53;background:#f6fff8;padding:7px 8px}.inventory-slot:hover{background:#e3f3e6}
+.touch-jump{position:absolute;right:20px;bottom:325px;border:1px solid #ffffffc0;border-radius:50%;width:64px;height:64px;background:#fffdf0ed;color:var(--ink);font-size:13px;touch-action:none}.crosshair{left:50%!important;top:50%!important}.walking #world{cursor:none}
 @media(max-width:600px){.walk-guide{font-size:10px;line-height:1.5;padding:10px 13px}.walk-guide strong{font-size:11px}.touch-controls{bottom:230px}}

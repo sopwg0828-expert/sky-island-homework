@@ -7,7 +7,7 @@ export function advanceMining(world,state,target,held,dt){
   const key=`${target.x},${target.y},${target.z}`;
   if(state.mining.key!==key)state.mining=blankMining();
   const m=state.mining;m.key=key;m.elapsed+=Math.max(0,Math.min(dt,.05));
-  m.progress=Math.min(1,m.elapsed/(type===3?2:.8));m.stage=Math.min(9,Math.floor(m.progress*10));
+  m.progress=Math.min(1,m.elapsed/(type===3?10:.8));m.stage=Math.min(9,Math.floor(m.progress*10));
   if(m.progress<1-1e-9)return null;
   world.blocks.delete(key);world.revision=(world.revision||0)+1;state.mining=blankMining();
   return {x:target.x,y:target.y,z:target.z,type};

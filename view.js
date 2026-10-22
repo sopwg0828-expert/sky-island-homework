@@ -1,2 +1,5 @@
-export function lookFromMovement(){throw new Error('滑鼠移動視角尚未實作');}
-export function cameraFromPlayer(){throw new Error('跳躍時攝影機連動尚未實作');}
+export function lookFromMovement(look,dx,dy){
+  const sensitivity=.0025;
+  return {yaw:look.yaw-dx*sensitivity,pitch:Math.max(-1.45,Math.min(1.45,look.pitch-dy*sensitivity))};
+}
+export function cameraFromPlayer(player){return {x:player.x,y:player.y+1.55,z:player.z};}

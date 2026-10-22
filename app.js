@@ -2,11 +2,12 @@ import * as THREE from './vendor/three.module.js';
 import {createWorld,createPlayer,tickPlayer,movement,exposedFaces,FACES} from './world.js';
 import {createCollection,advanceMining,spawnDrop,tickDrops,resetCollection} from './collection.js';
 import {placeBlock,bridgeTarget} from './placement.js';
+import {lookFromMovement,cameraFromPlayer} from './view.js';
 
 const $=id=>document.getElementById(id);
 const canvas=$('world'),world=createWorld(),player=createPlayer();
 const collection=createCollection(),names={1:'草地方塊',2:'泥土',3:'石頭'};
-let selectedType=1,rightGesture=null;
+let selectedType=1,jumpQueued=false,pointerLocked=false;
 let renderer,terrain,running=false,yaw=.55,pitch=-.35,dragging=false,lastPointer=null,lastTime=0,accumulator=0,frames=0,fpsTime=0,miningHeld=false;
 const aim=new THREE.Vector2(0,0),raycaster=new THREE.Raycaster();raycaster.far=4.5;
 const dropMeshes=new Map(),dropMaterials={},crackTextures=[];
@@ -88,12 +89,14 @@ function overview(){
   else{camera.clearViewOffset();camera.position.set(42,29,44);camera.lookAt(10,7.5,15);camera.setViewOffset(innerWidth,innerHeight,-innerWidth*.14,0,innerWidth,innerHeight);}
 }
 function active(value){
-  running=value;keys.clear();touch.clear();dragging=false;miningHeld=false;
+  running=value;keys.clear();touch.clear();dragging=false;miningHeld=false;jumpQueued=false;aim.set(0,0);lastPointer=null;
+  if(!value&&document.pointerLockElement===canvas)document.exitPointerLock();
   advanceMining(world,collection,null,false,0);selection.visible=false;cracks.visible=false;placementPreview.visible=false;
   $('welcome').hidden=value;$('crosshair').hidden=!value;$('pause').hidden=!value;$('walk-guide').hidden=!value;
   $('inventory').hidden=!value;$('mining-panel').hidden=!value;
   $('touch-controls').hidden=!value||!matchMedia('(pointer:coarse)').matches;
   $('touch-mine').hidden=!value||!matchMedia('(pointer:coarse)').matches;
+  $('touch-jump').hidden=!value||!matchMedia('(pointer:coarse)').matches;
   document.body.classList.toggle('walking',value);
   if(value){camera.clearViewOffset();canvas.focus();}else overview();
 }
@@ -106,6 +109,7 @@ function selectMaterial(type){
   document.querySelectorAll('[data-material]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.material)===type)));
 }
 function tryPlace(){
+  if(player.swept){notice('正在被河流沖走，無法放置方塊。');return;}
   const target=currentTarget()||bridgeTarget(world,player,raycaster.ray);
   if(!collection.inventory[selectedType]){notice(`${names[selectedType]}不足，先挖掘並拾取材料。`);return;}
   if(!target){notice('到島邊往前下方看，對準與島相連的下一格，再按右鍵延伸橋面。');return;}
@@ -127,6 +131,7 @@ function updateDrops(){
 }
 function currentTarget(){
   camera.updateMatrixWorld();terrain.updateMatrixWorld();
+  aim.set(0,0);
   raycaster.setFromCamera(aim,camera);
   const hit=raycaster.intersectObject(terrain,false)[0];
   if(!hit)return null;
@@ -143,7 +148,7 @@ function miningFrame(dt){
   if(placementPreview.visible)placementPreview.position.set(bridge.x+bridge.normal.x+.5,bridge.y+.5,bridge.z+bridge.normal.z+.5);
   selection.visible=!!target;
   if(target)selection.position.set(target.x+.5,target.y+.5,target.z+.5);
-  const broken=advanceMining(world,collection,target,miningHeld,dt);
+  const broken=advanceMining(world,collection,target,miningHeld&&!player.swept,dt);
   if(broken){spawnDrop(collection,broken);buildTerrain(atlas);selection.visible=false;}
   cracks.visible=!!target&&collection.mining.progress>0;
   if(cracks.visible){
@@ -151,10 +156,10 @@ function miningFrame(dt){
     const texture=crackTextures[collection.mining.stage];
     if(cracks.material.map!==texture){cracks.material.map=texture;cracks.material.needsUpdate=true;}
   }
-  $('mining-label').textContent=target?`${names[target.type]} · 按住左鍵 ${target.type===3?'2':'0.8'} 秒`:bridge?'島邊搭橋 · 右鍵放出下一格':'把準星移到附近的方塊';
+  $('mining-label').textContent=player.swept?'正在被河流沖往下游！':target?`${names[target.type]} · 按住左鍵 ${target.type===3?'10':'0.8'} 秒`:bridge?'島邊搭橋 · 右鍵放出下一格':'把中央準心對準附近的方塊';
   const percent=Math.round(collection.mining.progress*100);
   $('mining-progress').style.width=percent+'%';$('mining-meter').setAttribute('aria-valuenow',percent);
-  $('mining-hint').textContent=percent>0?'持續按住，放開就要重挖':bridge?'綠色方塊是橋面位置；放一格、走一格再繼續':target?'挖碎後，走近掉落的小方塊就能收進背包':'搭橋時到島邊，往前下方的空隙看';
+  $('mining-hint').textContent=player.swept?'將被沖出島外，掉入虛空後整局重新開始':percent>0?'持續按住，放開就要重挖':bridge?'綠色方塊是橋面位置；放一格、走一格再繼續':target?'移動滑鼠轉向；空白鍵跳躍；右鍵放置':'搭橋時到島邊，往前下方的空隙看';
   const picked=tickDrops(world,collection,player,dt);
   if(picked.length){updateInventory();notice(picked.map(type=>`${names[type]} +1`).join('、'));}
   updateDrops();
@@ -168,13 +173,15 @@ function update(time){
     const right=Number(keys.has('KeyD')||touch.has('right'))-Number(keys.has('KeyA')||touch.has('left'));
     const forward=Number(keys.has('KeyW')||touch.has('forward'))-Number(keys.has('KeyS')||touch.has('back'));
     accumulator+=dt;
-    const resets=player.resets;
-    while(accumulator>=1/120){tickPlayer(world,player,movement(right,forward,yaw),1/120);accumulator-=1/120;}
+    const resets=player.resets,wasSwept=player.swept;
+    while(accumulator>=1/120){tickPlayer(world,player,{...movement(right,forward,yaw),jump:jumpQueued},1/120);jumpQueued=false;accumulator-=1/120;}
+    if(!wasSwept&&player.swept){miningHeld=false;notice('踩到河流了！正在被沖往下游。');}
     if(player.resets!==resets){
       resetCollection(collection);updateDrops();updateInventory();selectMaterial(1);miningHeld=false;buildTerrain(atlas);
       notice('掉下島了，材料歸零，回到起點重新開始。');yaw=.55;pitch=-.35;
     }
-    camera.position.set(player.x,player.y+1.55,player.z);camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0);
+    const eye=cameraFromPlayer(player);
+    camera.position.set(eye.x,eye.y,eye.z);camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0);
     miningFrame(dt);
   }
   renderer.render(scene,camera);
@@ -208,13 +215,28 @@ async function init(){
     $('error-message').textContent='請使用支援 WebGL 2 的瀏覽器，並透過專案的啟動方式開啟。如果仍無法載入，請確認素材檔案完整。';
   }
 }
-$('start').addEventListener('click',()=>active(true));
+function captureMouse(){
+  if(!running||matchMedia('(pointer:coarse)').matches||document.pointerLockElement===canvas)return;
+  try{const request=canvas.requestPointerLock?.();request?.catch(()=>{});}catch{/* 無法鎖定時仍可直接移動滑鼠轉向。 */}
+}
+function turnWithMouse(dx,dy){
+  if(!running)return;
+  const look=lookFromMovement({yaw,pitch},dx,dy);yaw=look.yaw;pitch=look.pitch;
+}
+document.addEventListener('pointerlockchange',()=>{
+  const locked=document.pointerLockElement===canvas;
+  if(pointerLocked&&!locked&&running){active(false);$('start-label').textContent='繼續探索';}
+  pointerLocked=locked;lastPointer=null;
+});
+document.addEventListener('mousemove',e=>{if(document.pointerLockElement===canvas)turnWithMouse(e.movementX,e.movementY);});
+$('start').addEventListener('click',()=>{active(true);captureMouse();});
 $('pause').addEventListener('click',()=>{active(false);$('start-label').textContent='繼續探索';});
 $('fullscreen').addEventListener('click',async()=>{
   try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}
   catch{notice('目前瀏覽器無法切換全螢幕，可改用瀏覽器的全螢幕功能。');}
 });
 addEventListener('keydown',e=>{
+  if(running&&e.code==='Space'){e.preventDefault();if(!e.repeat)jumpQueued=true;return;}
   if(running&&['Digit1','Digit2','Digit3'].includes(e.code)){e.preventDefault();selectMaterial(Number(e.code.at(-1)));return;}
   if(['KeyW','KeyA','KeyS','KeyD','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Escape'].includes(e.code)){
     if(running)e.preventDefault();
@@ -222,38 +244,36 @@ addEventListener('keydown',e=>{
   }
 });
 addEventListener('keyup',e=>keys.delete(e.code));
-function releaseInputs(){keys.clear();touch.clear();dragging=false;miningHeld=false;rightGesture=null;advanceMining(world,collection,null,false,0);cracks.visible=false;}
+function releaseInputs(){keys.clear();touch.clear();dragging=false;miningHeld=false;jumpQueued=false;lastPointer=null;advanceMining(world,collection,null,false,0);cracks.visible=false;}
 addEventListener('blur',releaseInputs);
 document.addEventListener('visibilitychange',()=>{releaseInputs();accumulator=0;lastTime=performance.now();});
-function pointAim(e){
-  const rect=canvas.getBoundingClientRect();
-  aim.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);
-  $('crosshair').style.left=(e.clientX-rect.left)+'px';$('crosshair').style.top=(e.clientY-rect.top)+'px';
-}
 canvas.addEventListener('pointerdown',e=>{
   if(!running)return;
-  pointAim(e);dragging=e.button===2||e.pointerType==='touch';
-  rightGesture=e.button===2?{x:e.clientX,y:e.clientY,time:performance.now(),moved:false}:null;
+  dragging=e.pointerType==='touch';
+  if(e.pointerType!=='touch')captureMouse();
+  if(e.button===2){tryPlace();return;}
   if(e.button===0&&e.pointerType!=='touch')miningHeld=true;
-  lastPointer={x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);
+  lastPointer={x:e.clientX,y:e.clientY};
+  if(e.pointerType==='touch')canvas.setPointerCapture(e.pointerId);
 });
+canvas.addEventListener('pointerenter',e=>{lastPointer={x:e.clientX,y:e.clientY};});
 canvas.addEventListener('pointermove',e=>{
-  if(running)pointAim(e);
-  if(!running||!dragging)return;
-  if(rightGesture){rightGesture.moved ||= Math.hypot(e.clientX-rightGesture.x,e.clientY-rightGesture.y)>4;if(!rightGesture.moved)return;}
-  yaw-=(e.clientX-lastPointer.x)*.004;pitch=THREE.MathUtils.clamp(pitch-(e.clientY-lastPointer.y)*.004,-1.35,1.35);
+  if(!running||document.pointerLockElement===canvas)return;
+  if(e.pointerType==='touch'&&!dragging)return;
+  if(lastPointer)turnWithMouse(e.clientX-lastPointer.x,e.clientY-lastPointer.y);
   lastPointer={x:e.clientX,y:e.clientY};
 });
 for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,e=>{
-  if(event==='pointerup'&&e.button===2&&rightGesture&&!rightGesture.moved&&performance.now()-rightGesture.time<500&&running)tryPlace();
-  rightGesture=null;dragging=false;miningHeld=false;advanceMining(world,collection,null,false,0);cracks.visible=false;
+  dragging=false;miningHeld=false;advanceMining(world,collection,null,false,0);cracks.visible=false;
 });
+document.addEventListener('mouseup',e=>{if(e.button===0){miningHeld=false;advanceMining(world,collection,null,false,0);cracks.visible=false;}});
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 document.querySelectorAll('[data-move]').forEach(button=>{
   button.addEventListener('pointerdown',e=>{e.preventDefault();touch.add(button.dataset.move);button.setPointerCapture(e.pointerId);});
   for(const event of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(event,()=>touch.delete(button.dataset.move));
 });
 $('touch-mine').addEventListener('pointerdown',e=>{e.preventDefault();aim.set(0,0);$('crosshair').style.left='50%';$('crosshair').style.top='50%';miningHeld=true;$('touch-mine').setPointerCapture(e.pointerId);});
+$('touch-jump').addEventListener('click',()=>jumpQueued=true);
 for(const event of ['pointerup','pointercancel','lostpointercapture'])$('touch-mine').addEventListener(event,()=>{miningHeld=false;advanceMining(world,collection,null,false,0);});
 document.querySelectorAll('[data-material]').forEach(button=>button.addEventListener('click',()=>selectMaterial(Number(button.dataset.material))));
 addEventListener('resize',()=>{if(renderer){resize();if(!running)overview();}});

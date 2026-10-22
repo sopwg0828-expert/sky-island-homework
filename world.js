@@ -26,7 +26,7 @@ export function createWorld() {
   }
   return world;
 }
-export function createPlayer(){return {...SPAWN,vy:0,grounded:true,resets:0};}
+export function createPlayer(){return {...SPAWN,vy:0,grounded:true,resets:0,jumpHeld:false,swept:false};}
 export function getBlock(world,x,y,z){
   if(x<0||x>=SIZE||y<0||y>=SIZE||z<0||z>=SIZE)return 0;
   return world.blocks.get(key(x,y,z))||0;
@@ -44,6 +44,10 @@ function hits(world,x,y,z){
 }
 export function tickPlayer(world,p,input,dt){
   dt=Math.min(Math.max(dt,0),.05);
+  if(!p.swept)detectCurrent(world,p);
+  if(p.swept){moveInCurrent(world,p,dt);restartIfFallen(world,p);return;}
+  if(input.jump&&!p.jumpHeld&&p.grounded){p.vy=8.4;p.grounded=false;}
+  p.jumpHeld=!!input.jump;
   const grounded=p.grounded;
   for(const axis of ['x','z']){
     const delta=(input[axis]||0)*4.2*dt;
@@ -60,6 +64,25 @@ export function tickPlayer(world,p,input,dt){
     if(p.vy<0){p.y=Math.round(p.y);p.grounded=true;}
     p.vy=0;
   }else{p.y=next;p.grounded=false;}
+  detectCurrent(world,p);
+  restartIfFallen(world,p);
+}
+function detectCurrent(world,p){
+  if(!p.grounded||!world.river)return;
+  const tile=world.river.find(tile=>tile.x===Math.floor(p.x)&&tile.z===Math.floor(p.z)&&Math.abs(p.y-(tile.y-.025))<.16);
+  if(tile){p.swept=true;p.flowX=p.x;p.vy=0;p.grounded=false;}
+}
+function moveInCurrent(world,p,dt){
+  p.grounded=false;p.z+=4.8*dt;
+  const row=(world.river||[]).filter(tile=>tile.z===Math.floor(p.z));
+  if(row.length){
+    p.flowX=(Math.min(...row.map(t=>t.x))+Math.max(...row.map(t=>t.x))+1)/2;
+    const surface=Math.max(...row.map(t=>t.y))-.025;
+    p.y+=Math.max(-6*dt,Math.min(6*dt,surface-p.y));p.vy=0;
+  }else{p.vy-=22*dt;p.y+=p.vy*dt;}
+  p.x+=Math.max(-4*dt,Math.min(4*dt,p.flowX-p.x));
+}
+function restartIfFallen(world,p){
   if(p.y<-3){
     const fresh=createWorld();
     world.blocks=fresh.blocks;world.river=fresh.river;world.revision=(world.revision||0)+1;
