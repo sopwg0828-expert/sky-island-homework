@@ -1,3 +1,4 @@
+import {initWater} from './water.js';
 export const SIZE = 32;
 export const SPAWN = { x: 14.5, y: 10, z: 21.5 };
 const key=(x,y,z)=>`${x},${y},${z}`;
@@ -10,20 +11,31 @@ export function createWorld() {
       const rise=mountain?Math.max(0,4-Math.floor(Math.hypot((x+.5-9)*1.05,z+.5-13))):0;
       const top=9+rise;
       const bottom=Math.max(2,7-Math.floor((1-d)*5));
-      for(let y=bottom;y<=top;y++)world.blocks.set(key(x,y,z),y===top?1:y>=top-2?2:3);
+      for(let y=bottom;y<=top;y++)world.blocks.set(key(x,y,z),y===bottom?4:y===top?1:y>=top-2?2:3);
     }
   }
   island(9.5,16,8.5,10,true);
   island(27.5,16.5,3.5,5.5,false);
-  // 固定河道僅是景觀；水面沒有額外圖片材質。
+  // 保留山上水源；水可沿挖開的空格向下流動。
   for(let z=13;z<=24;z++){
     const x=9+(z>=18?1:0)+(z>=22?1:0);
     for(let width=0;width<2;width++){
       let y=31;
       while(y>=0&&!getBlock(world,x+width,y,z))y--;
-      if(y>=0)world.river.push({x:x+width,y:y+1.025,z});
+      if(y>=0){world.blocks.delete(key(x+width,y,z));world.river.push({x:x+width,y:y+.025,z});}
     }
   }
+  // 山坡側岸補至水道同高，避免高處水源從側面淹到整座島。
+  const channel=new Set(world.river.map(t=>`${t.x},${t.z}`));
+  for(const t of world.river)for(const [dx,dz]of [[1,0],[-1,0],[0,1],[0,-1]]){
+    const x=t.x+dx,z=t.z+dz;
+    if(x<0||x>=SIZE||z<0||z>=SIZE||channel.has(`${x},${z}`))continue;
+    let top=31;while(top>=0&&!getBlock(world,x,top,z))top--;
+    if(top<0)continue;
+    const bank=Math.floor(t.y);
+    if(top<bank){world.blocks.set(key(x,top,z),2);for(let y=top+1;y<=bank;y++)world.blocks.set(key(x,y,z),y===bank?1:2);}
+  }
+  initWater(world);
   return world;
 }
 export function createPlayer(){return {...SPAWN,vy:0,grounded:true,resets:0,jumpHeld:false,swept:false};}
@@ -70,9 +82,22 @@ export function tickPlayer(world,p,input,dt){
 function detectCurrent(world,p){
   if(!p.grounded||!world.river)return;
   const tile=world.river.find(tile=>tile.x===Math.floor(p.x)&&tile.z===Math.floor(p.z)&&Math.abs(p.y-(tile.y-.025))<.16);
-  if(tile){p.swept=true;p.flowX=p.x;p.vy=0;p.grounded=false;}
+  if(tile){p.swept=true;p.dynamicCurrent=false;p.flowX=p.x;p.vy=0;p.grounded=false;return;}
+  const cell=world.water?.get(key(Math.floor(p.x),Math.floor(p.y+.05),Math.floor(p.z)));
+  if(cell&&p.y<cell.y+cell.level/8){p.swept=true;p.dynamicCurrent=true;p.vy=0;p.grounded=false;}
 }
 function moveInCurrent(world,p,dt){
+  if(p.dynamicCurrent){
+    const cell=world.water?.get(key(Math.floor(p.x),Math.floor(p.y+.05),Math.floor(p.z)));
+    const dx=cell?.dx??p.flowDX??0,dz=cell?.dz??p.flowDZ??1;
+    p.flowDX=dx;p.flowDZ=dz;
+    const nx=p.x+dx*3*dt,nz=p.z+dz*3*dt;
+    if(!hits(world,nx,p.y,p.z))p.x=nx;
+    if(!hits(world,p.x,p.y,nz))p.z=nz;
+    p.vy-=22*dt;const next=p.y+p.vy*dt;
+    if(hits(world,p.x,next,p.z)){p.vy=0;p.y=Math.round(p.y);}else p.y=next;
+    p.grounded=false;return;
+  }
   p.grounded=false;p.z+=4.8*dt;
   const row=(world.river||[]).filter(tile=>tile.z===Math.floor(p.z));
   if(row.length){
@@ -85,7 +110,7 @@ function moveInCurrent(world,p,dt){
 function restartIfFallen(world,p){
   if(p.y<-3){
     const fresh=createWorld();
-    world.blocks=fresh.blocks;world.river=fresh.river;world.revision=(world.revision||0)+1;
+    world.blocks=fresh.blocks;world.river=fresh.river;initWater(world);world.revision=(world.revision||0)+1;
     const resets=p.resets+1;
     Object.assign(p,createPlayer(),{resets});
   }

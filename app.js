@@ -1,4 +1,5 @@
 import * as THREE from './vendor/three.module.js';
+import {tickWater,waterBoxes} from './water.js';
 import {createWorld,createPlayer,tickPlayer,movement,exposedFaces,FACES} from './world.js';
 import {createCollection,advanceMining,spawnDrop,tickDrops,resetCollection} from './collection.js';
 import {placeBlock,bridgeTarget} from './placement.js';
@@ -6,7 +7,7 @@ import {lookFromMovement,cameraFromPlayer} from './view.js';
 
 const $=id=>document.getElementById(id);
 const canvas=$('world'),world=createWorld(),player=createPlayer();
-const collection=createCollection(),names={1:'草地方塊',2:'泥土',3:'石頭'};
+const collection=createCollection(),names={1:'草地方塊',2:'泥土',3:'石頭',4:'基岩'};
 let selectedType=1,jumpQueued=false,pointerLocked=false;
 let renderer,terrain,running=false,yaw=.55,pitch=-.35,dragging=false,lastPointer=null,lastTime=0,accumulator=0,frames=0,fpsTime=0,miningHeld=false;
 const aim=new THREE.Vector2(0,0),raycaster=new THREE.Raycaster();raycaster.far=4.5;
@@ -35,7 +36,7 @@ function buildTerrain(texture){
     const col=tile%4,row=Math.floor(tile/4),inset=.15/64;
     const u0=col/4+inset,u1=(col+1)/4-inset,v0=1-(row+1)/4+inset,v1=1-row/4-inset;
     const index=positions.length/3;
-    for(const v of def.v){positions.push(x+v[0],y+v[1],z+v[2]);colors.push(def.shade,def.shade,def.shade);}
+    for(const v of def.v){positions.push(x+v[0],y+v[1],z+v[2]);const shade=def.shade*(type===4?.32:1);colors.push(shade,shade,shade);}
     uvs.push(u0,v0,u1,v0,u0,v1,u1,v1);
     indices.push(index,index+1,index+2,index+2,index+1,index+3);
   }
@@ -47,23 +48,32 @@ function buildTerrain(texture){
   if(terrain){scene.remove(terrain);terrain.geometry.dispose();terrain.material.dispose();}
   terrain=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({map:texture,vertexColors:true}));
   scene.add(terrain);
-  const oldWaterMaterials=new Set(water.children.map(child=>child.material));
-  for(const child of [...water.children]){water.remove(child);child.geometry.dispose();}
-  for(const material of oldWaterMaterials)material.dispose();
-  const waterMaterial=new THREE.MeshBasicMaterial({color:'#68bce0',transparent:true,opacity:.8});
-  for(const tile of world.river){
-    const mesh=new THREE.Mesh(new THREE.BoxGeometry(1,.045,1),waterMaterial);
-    mesh.position.set(tile.x+.5,tile.y,tile.z+.5);water.add(mesh);
-  }
-  // 階梯河道的垂直落差，使用純色幾何，不引入其他圖片材質。
-  for(let i=0;i<world.river.length-2;i++){
-    const a=world.river[i],b=world.river[i+2];
-    if(a.x===b.x&&a.y>b.y){
-      const mesh=new THREE.Mesh(new THREE.BoxGeometry(1,a.y-b.y,.05),waterMaterial);
-      mesh.position.set(a.x+.5,(a.y+b.y)/2,a.z+1);water.add(mesh);
-    }
-  }
+  rebuildWater();
 }
+
+// 合併重複水方塊，整片水只需少量繪製，不為每格新增物件。
+const waterGeometry=new THREE.BoxGeometry(1,1,1);
+const waterMaterial=new THREE.MeshBasicMaterial({color:'#4faed5',transparent:true,opacity:.7,depthWrite:false});
+const waterMesh=new THREE.InstancedMesh(waterGeometry,waterMaterial,32*32*32);
+waterMesh.count=0;waterMesh.frustumCulled=false;water.add(waterMesh);
+const glints=new THREE.InstancedMesh(new THREE.BoxGeometry(.22,.012,.10),new THREE.MeshBasicMaterial({color:'#d4f6ff',transparent:true,opacity:.65,depthWrite:false}),256);
+glints.count=0;glints.frustumCulled=false;water.add(glints);
+const matrix=new THREE.Object3D();let visibleWater=[],waterVersion=-1;
+function rebuildWater(){
+  visibleWater=waterBoxes(world);
+  for(let i=0;i<visibleWater.length;i++){
+    const t=visibleWater[i];matrix.position.set(t.x+.5,t.y+t.height/2,t.z+.5);matrix.scale.set(.998,t.height,.998);matrix.rotation.set(0,0,0);matrix.updateMatrix();waterMesh.setMatrixAt(i,matrix.matrix);
+  }
+  waterMesh.count=visibleWater.length;waterMesh.instanceMatrix.needsUpdate=true;waterVersion=world.waterRevision;
+}
+function animateWater(time){
+  const count=Math.min(256,visibleWater.length),phase=(time%850)/850-.5;
+  for(let i=0;i<count;i++){
+    const t=visibleWater[i];matrix.position.set(t.x+.5+t.dx*phase*.8,t.y+t.height+.012,t.z+.5+t.dz*phase*.8);matrix.scale.set(1,1,1);matrix.rotation.set(0,t.dx?Math.PI/2:0,0);matrix.updateMatrix();glints.setMatrixAt(i,matrix.matrix);
+  }
+  glints.count=count;glints.instanceMatrix.needsUpdate=true;
+}
+
 function sky(){
   const white=new THREE.MeshBasicMaterial({color:'#f5fbfd'}),shade=new THREE.MeshBasicMaterial({color:'#dfedf1'});
   const cloudPositions=[[-12,22,4],[5,27,-13],[31,22,-4],[45,25,19],[2,21,39],[-20,26,26],[28,30,41]];
@@ -156,10 +166,10 @@ function miningFrame(dt){
     const texture=crackTextures[collection.mining.stage];
     if(cracks.material.map!==texture){cracks.material.map=texture;cracks.material.needsUpdate=true;}
   }
-  $('mining-label').textContent=player.swept?'正在被河流沖往下游！':target?`${names[target.type]} · 按住左鍵 ${target.type===3?'10':'0.8'} 秒`:bridge?'島邊搭橋 · 右鍵放出下一格':'把中央準心對準附近的方塊';
+  $('mining-label').textContent=player.swept?'正在被河流沖往下游！':target?.type===4?'基岩 · 無法挖掘':target?`${names[target.type]} · 按住左鍵 ${target.type===3?'2':'0.8'} 秒`:bridge?'島邊搭橋 · 右鍵放出下一格':'把中央準心對準附近的方塊';
   const percent=Math.round(collection.mining.progress*100);
   $('mining-progress').style.width=percent+'%';$('mining-meter').setAttribute('aria-valuenow',percent);
-  $('mining-hint').textContent=player.swept?'將被沖出島外，掉入虛空後整局重新開始':percent>0?'持續按住，放開就要重挖':bridge?'綠色方塊是橋面位置；放一格、走一格再繼續':target?'移動滑鼠轉向；空白鍵跳躍；右鍵放置':'搭橋時到島邊，往前下方的空隙看';
+  $('mining-hint').textContent=player.swept?'將被沖出島外，掉入虛空後整局重新開始':target?.type===4?'這是島的底層，按住再久也不會破壞':percent>0?'持續按住，放開就要重挖':bridge?'綠色方塊是橋面位置；放一格、走一格再繼續':target?'移動滑鼠轉向；空白鍵跳躍；右鍵放置':'搭橋時到島邊，往前下方的空隙看';
   const picked=tickDrops(world,collection,player,dt);
   if(picked.length){updateInventory();notice(picked.map(type=>`${names[type]} +1`).join('、'));}
   updateDrops();
@@ -182,8 +192,11 @@ function update(time){
     }
     const eye=cameraFromPlayer(player);
     camera.position.set(eye.x,eye.y,eye.z);camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0);
+    tickWater(world,dt);
+    if(waterVersion!==world.waterRevision)rebuildWater();
     miningFrame(dt);
   }
+  animateWater(time);
   renderer.render(scene,camera);
   frames++;fpsTime+=dt;
   if(fpsTime>=1){$('fps').textContent=`${Math.round(frames/fpsTime)} FPS`;frames=0;fpsTime=0;}

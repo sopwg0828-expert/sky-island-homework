@@ -8,7 +8,7 @@
 - PLANS.md：目前計畫、實作進度、測試對應與待驗證事項。
 - AGENTS.md：合作規則。
 - tests/：自動測試；docs/：當時功能未實作的失敗紀錄及修正後結果。
-- index.html、style.css、app.js、world.js、view.js、collection.js、placement.js：靜態遊戲程式。
+- index.html、style.css、app.js、world.js、water.js、view.js、collection.js、placement.js：靜態遊戲程式。
 - assets/、vendor/：老師指定素材及固定版本 three.js，附原授權。
 - README.md：啟動方式、操作與測試指令。
 
@@ -25,9 +25,9 @@ docs/submission/BRIEF-staged-before-submission.md 與 VERIFY-staged-before-submi
 ## 已知待完成與待驗證
 
 - 整理開始時：STEP 0～3 的 29 項自動測試通過，紀錄在 docs/submission/baseline-tests.txt。
-- 第一批 STEP 4「放回方塊」已補齊：8 項測試先失敗並提交，再實作為通過。後續修正橋面，並加入使用者指定的新操作、跳躍與河流沖走，最終共 50 項自動測試通過，詳見 docs/submission/final-tests.txt。完整人工驗收狀態仍以 PLANS.md 為準。
-- 使用者後續指定石頭挖掘改成 10 秒，與老師原本約 2 秒不同；VERIFY.md 保留原文，不能宣稱原本的 2 秒項目通過。新規格及先改測試再改實作的證據見 docs/需求變更-操作與河流.md。
-- 第 2 批目前包含景觀基礎；水流動畫未完成。搭橋到對岸已通過使用實際雙島地形的自動測試，但完整使用者親自往返驗收尚未完成，不自行勾選 VERIFY.md。
+- 第一批 STEP 4「放回方塊」已補齊：8 項測試先失敗並提交，再實作為通過。後續修正橋面，並加入使用者指定的新操作、跳躍與河流沖走，目前共 59 項自動測試通過，詳見 docs/submission/final-tests.txt。完整人工驗收狀態仍以 PLANS.md 為準。
+- 使用者曾指定石頭改為 10 秒，最新已要求改回 2 秒，對應自動測試通過；先前差異紀錄保留，VERIFY.md 原文不改。另加入兩島不可挖的基岩、立體水與挖掘改道，證據見 docs/需求變更-立體水與基岩.md。
+- 第 2 批目前包含景觀、立體水、瀑布與流動動畫，另依使用者要求加入動態改道。搭橋到對岸已通過使用實際雙島地形的自動測試，但完整使用者親自往返驗收尚未完成，不自行勾選 VERIFY.md。
 - 學校舊電腦／CPU 或內顯的全螢幕 30 FPS 要求尚無目標設備實測，列為待驗證。
 - 詳細狀態以 PLANS.md 與實際測試結果為準；不自行勾選使用者的 VERIFY.md。
 

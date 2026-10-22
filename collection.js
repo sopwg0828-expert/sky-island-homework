@@ -3,11 +3,11 @@ const blankMining=()=>({key:null,elapsed:0,progress:0,stage:0});
 export function createCollection(){return {mining:blankMining(),drops:[],inventory:{1:0,2:0,3:0},nextId:1};}
 export function advanceMining(world,state,target,held,dt){
   const type=target?getBlock(world,target.x,target.y,target.z):0;
-  if(!held||!type||!Number.isFinite(target.distance)||target.distance>4.5){state.mining=blankMining();return null;}
+  if(!held||!type||type===4||!Number.isFinite(target.distance)||target.distance>4.5){state.mining=blankMining();return null;}
   const key=`${target.x},${target.y},${target.z}`;
   if(state.mining.key!==key)state.mining=blankMining();
   const m=state.mining;m.key=key;m.elapsed+=Math.max(0,Math.min(dt,.05));
-  m.progress=Math.min(1,m.elapsed/(type===3?10:.8));m.stage=Math.min(9,Math.floor(m.progress*10));
+  m.progress=Math.min(1,m.elapsed/(type===3?2:.8));m.stage=Math.min(9,Math.floor(m.progress*10));
   if(m.progress<1-1e-9)return null;
   world.blocks.delete(key);world.revision=(world.revision||0)+1;state.mining=blankMining();
   return {x:target.x,y:target.y,z:target.z,type};
