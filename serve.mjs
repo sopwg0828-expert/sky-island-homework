@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const root=fileURLToPath(new URL('.',import.meta.url));
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.txt':'text/plain; charset=utf-8'};
-const files=new Set(['/index.html','/app.js','/world.js','/collection.js','/style.css']);
+const files=new Set(['/index.html','/app.js','/world.js','/collection.js','/placement.js','/style.css']);
 const server=http.createServer(async(req,res)=>{
   try{
     let name=decodeURIComponent(new URL(req.url,'http://localhost').pathname);

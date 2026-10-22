@@ -1,10 +1,12 @@
 import * as THREE from './vendor/three.module.js';
 import {createWorld,createPlayer,tickPlayer,movement,exposedFaces,FACES} from './world.js';
 import {createCollection,advanceMining,spawnDrop,tickDrops,resetCollection} from './collection.js';
+import {placeBlock} from './placement.js';
 
 const $=id=>document.getElementById(id);
 const canvas=$('world'),world=createWorld(),player=createPlayer();
 const collection=createCollection(),names={1:'草地方塊',2:'泥土',3:'石頭'};
+let selectedType=1,rightGesture=null;
 let renderer,terrain,running=false,yaw=.55,pitch=-.35,dragging=false,lastPointer=null,lastTime=0,accumulator=0,frames=0,fpsTime=0,miningHeld=false;
 const aim=new THREE.Vector2(0,0),raycaster=new THREE.Raycaster();raycaster.far=4.5;
 const dropMeshes=new Map(),dropMaterials={},crackTextures=[];
@@ -96,6 +98,19 @@ function notice(text){$('notice').textContent=text;$('notice').hidden=false;setT
 function updateInventory(){
   for(const type of [1,2,3])$('count-'+type).textContent=collection.inventory[type];
 }
+function selectMaterial(type){
+  selectedType=type;
+  document.querySelectorAll('[data-material]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.material)===type)));
+}
+function tryPlace(){
+  const target=currentTarget();
+  if(!collection.inventory[selectedType]){notice(`${names[selectedType]}不足，先挖掘並拾取材料。`);return;}
+  if(!target){notice('請對準 4.5 格內的方塊表面，再按右鍵放置。');return;}
+  if(placeBlock(world,collection,player,target,target.normal,selectedType)){
+    buildTerrain(atlas);updateInventory();advanceMining(world,collection,null,false,0);cracks.visible=false;
+    notice(`放置${names[selectedType]}，材料 −1`);
+  }else notice('這格不能放置：需要空格、在世界範圍內，而且不能碰到自己。');
+}
 function updateDrops(){
   const existing=new Set();
   for(const drop of collection.drops){
@@ -114,6 +129,7 @@ function currentTarget(){
   if(!hit)return null;
   const point=hit.point.clone().addScaledVector(hit.face.normal,-.001);
   const target={x:Math.floor(point.x),y:Math.floor(point.y),z:Math.floor(point.z),distance:hit.distance};
+  target.normal={x:Math.round(hit.face.normal.x),y:Math.round(hit.face.normal.y),z:Math.round(hit.face.normal.z)};
   target.type=world.blocks.get(`${target.x},${target.y},${target.z}`);
   return target.type?target:null;
 }
@@ -149,7 +165,7 @@ function update(time){
     const resets=player.resets;
     while(accumulator>=1/120){tickPlayer(world,player,movement(right,forward,yaw),1/120);accumulator-=1/120;}
     if(player.resets!==resets){
-      resetCollection(collection);updateDrops();updateInventory();miningHeld=false;buildTerrain(atlas);
+      resetCollection(collection);updateDrops();updateInventory();selectMaterial(1);miningHeld=false;buildTerrain(atlas);
       notice('掉下島了，材料歸零，回到起點重新開始。');yaw=.55;pitch=-.35;
     }
     camera.position.set(player.x,player.y+1.55,player.z);camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0);
@@ -177,7 +193,7 @@ async function init(){
     }
     dropMaterials[1]=[tiles[1],tiles[1],tiles[0],tiles[2],tiles[1],tiles[1]];
     dropMaterials[2]=tiles[2];dropMaterials[3]=tiles[3];
-    updateInventory();
+    updateInventory();selectMaterial(1);
     buildTerrain(atlas);sky();resize();overview();
     $('start').disabled=false;$('start-label').textContent='走進小島';$('world-status').textContent='32 × 32 × 32 的小世界';
     requestAnimationFrame(update);
@@ -193,13 +209,14 @@ $('fullscreen').addEventListener('click',async()=>{
   catch{notice('目前瀏覽器無法切換全螢幕，可改用瀏覽器的全螢幕功能。');}
 });
 addEventListener('keydown',e=>{
+  if(running&&['Digit1','Digit2','Digit3'].includes(e.code)){e.preventDefault();selectMaterial(Number(e.code.at(-1)));return;}
   if(['KeyW','KeyA','KeyS','KeyD','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Escape'].includes(e.code)){
     if(running)e.preventDefault();
     if(e.code==='Escape'&&running){active(false);$('start-label').textContent='繼續探索';}else keys.add(e.code);
   }
 });
 addEventListener('keyup',e=>keys.delete(e.code));
-function releaseInputs(){keys.clear();touch.clear();dragging=false;miningHeld=false;advanceMining(world,collection,null,false,0);cracks.visible=false;}
+function releaseInputs(){keys.clear();touch.clear();dragging=false;miningHeld=false;rightGesture=null;advanceMining(world,collection,null,false,0);cracks.visible=false;}
 addEventListener('blur',releaseInputs);
 document.addEventListener('visibilitychange',()=>{releaseInputs();accumulator=0;lastTime=performance.now();});
 function pointAim(e){
@@ -210,16 +227,21 @@ function pointAim(e){
 canvas.addEventListener('pointerdown',e=>{
   if(!running)return;
   pointAim(e);dragging=e.button===2||e.pointerType==='touch';
+  rightGesture=e.button===2?{x:e.clientX,y:e.clientY,time:performance.now(),moved:false}:null;
   if(e.button===0&&e.pointerType!=='touch')miningHeld=true;
   lastPointer={x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);
 });
 canvas.addEventListener('pointermove',e=>{
   if(running)pointAim(e);
   if(!running||!dragging)return;
+  if(rightGesture){rightGesture.moved ||= Math.hypot(e.clientX-rightGesture.x,e.clientY-rightGesture.y)>4;if(!rightGesture.moved)return;}
   yaw-=(e.clientX-lastPointer.x)*.004;pitch=THREE.MathUtils.clamp(pitch-(e.clientY-lastPointer.y)*.004,-1.35,1.35);
   lastPointer={x:e.clientX,y:e.clientY};
 });
-for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,()=>{dragging=false;miningHeld=false;advanceMining(world,collection,null,false,0);cracks.visible=false;});
+for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,e=>{
+  if(event==='pointerup'&&e.button===2&&rightGesture&&!rightGesture.moved&&performance.now()-rightGesture.time<500&&running)tryPlace();
+  rightGesture=null;dragging=false;miningHeld=false;advanceMining(world,collection,null,false,0);cracks.visible=false;
+});
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 document.querySelectorAll('[data-move]').forEach(button=>{
   button.addEventListener('pointerdown',e=>{e.preventDefault();touch.add(button.dataset.move);button.setPointerCapture(e.pointerId);});
@@ -227,6 +249,7 @@ document.querySelectorAll('[data-move]').forEach(button=>{
 });
 $('touch-mine').addEventListener('pointerdown',e=>{e.preventDefault();aim.set(0,0);$('crosshair').style.left='50%';$('crosshair').style.top='50%';miningHeld=true;$('touch-mine').setPointerCapture(e.pointerId);});
 for(const event of ['pointerup','pointercancel','lostpointercapture'])$('touch-mine').addEventListener(event,()=>{miningHeld=false;advanceMining(world,collection,null,false,0);});
+document.querySelectorAll('[data-material]').forEach(button=>button.addEventListener('click',()=>selectMaterial(Number(button.dataset.material))));
 addEventListener('resize',()=>{if(renderer){resize();if(!running)overview();}});
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();active(false);notice('繪圖暫時中斷，請重新載入頁面。');});
 init();

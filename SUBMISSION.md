@@ -8,7 +8,7 @@
 - PLANS.md：目前計畫、實作進度、測試對應與待驗證事項。
 - AGENTS.md：合作規則。
 - tests/：自動測試；docs/：當時功能未實作的失敗紀錄及修正後結果。
-- index.html、style.css、app.js、world.js、collection.js：靜態遊戲程式。
+- index.html、style.css、app.js、world.js、collection.js、placement.js：靜態遊戲程式。
 - assets/、vendor/：老師指定素材及固定版本 three.js，附原授權。
 - README.md：啟動方式、操作與測試指令。
 
@@ -25,7 +25,7 @@ docs/submission/BRIEF-staged-before-submission.md 與 VERIFY-staged-before-submi
 ## 已知待完成與待驗證
 
 - 整理開始時：STEP 0～3 的 29 項自動測試通過，紀錄在 docs/submission/baseline-tests.txt。
-- 第一批 STEP 4「放回方塊」正在依正式測試先行流程補齊；完成前不能說第一批全部通過。
+- 第一批 STEP 4「放回方塊」已補齊：8 項測試先失敗並提交，再實作為通過。最終共 37 項自動測試通過，詳見 docs/submission/final-tests.txt。瀏覽器已驗證零材料不能放，以及挖、撿、放後數量從 0→1→0；完整人工驗收狀態仍以 PLANS.md 為準。
 - 第 2 批目前包含景觀基礎；水流動畫與搭橋到對岸未完成，保留為未完成項目，不勾選通過。
 - 學校舊電腦／CPU 或內顯的全螢幕 30 FPS 要求尚無目標設備實測，列為待驗證。
 - 詳細狀態以 PLANS.md 與實際測試結果為準；不自行勾選使用者的 VERIFY.md。
