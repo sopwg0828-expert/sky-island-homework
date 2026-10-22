@@ -1,0 +1,39 @@
+✔ 兩座島每一柱最底格都是基岩，上方仍有草泥石 (11.9338ms)
+✔ 基岩長按三十秒也不裂、不消失、不產生挖掉事件 (1.9681ms)
+✔ 水有可見厚度，不是薄片，河流來源有立體水 (0.8949ms)
+✔ 水隨時間落下並向空洞散開，不向上爬 (24.3685ms)
+✔ 挖掉河岸擋牆後水改道，放回牆後該格不再有水 (45.2412ms)
+✔ 水不能穿過基岩，所有流動格都維持在32立方範圍 (34.6654ms)
+✔ 瀑布在垂直空洞中形成相接的水方塊 (9.4176ms)
+✖ 原始河道低於河岸，未挖河岸時不淹到出生點 (108.6053ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 475.4643
+
+✖ failing tests:
+
+test at tests\water-bedrock.test.mjs:50:1
+✖ 原始河道低於河岸，未挖河岸時不淹到出生點 (108.6053ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:52:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

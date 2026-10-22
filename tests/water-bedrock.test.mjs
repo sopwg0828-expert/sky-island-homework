@@ -33,8 +33,8 @@ test('水隨時間落下並向空洞散開，不向上爬',()=>{
 test('挖掉河岸擋牆後水改道，放回牆後該格不再有水',()=>{
   const w=basin();for(let y=1;y<4;y++)for(let z=0;z<32;z++)w.blocks.set(`11,${y},${z}`,3);
   run(w);assert.equal(w.water.has('11,1,10'),false);assert.equal(w.water.has('12,1,10'),false);
-  w.blocks.delete('11,1,10');w.revision++;run(w);assert.ok(w.water.has('12,1,10'));
-  w.blocks.set('11,1,10',2);w.revision++;run(w);assert.equal(w.water.has('11,1,10'),false);
+  w.blocks.delete('11,1,10');w.blocks.delete('11,2,10');w.revision++;run(w);assert.ok(w.water.has('12,1,10'));
+  w.blocks.set('11,1,10',2);w.blocks.set('11,2,10',2);w.revision++;run(w);assert.equal(w.water.has('11,1,10'),false);
 });
 test('水不能穿過基岩，所有流動格都維持在32立方範圍',()=>{
   const w=basin();w.blocks.set('11,1,10',4);run(w,80);
@@ -46,4 +46,9 @@ test('瀑布在垂直空洞中形成相接的水方塊',()=>{
   const w=basin();w.blocks.delete('10,1,10');run(w);
   assert.ok(w.water.has('10,2,10'));assert.ok(w.water.has('10,1,10'));
   const falling=waterBoxes(w).find(b=>b.x===10&&b.y===1&&b.z===10);assert.equal(falling.height,1);
+});
+test('原始河道低於河岸，未挖河岸時不淹到出生點',()=>{
+  const w=createWorld();run(w,100);
+  assert.equal(w.water.has('14,10,21'),false);
+  for(const t of w.river)assert.equal(getBlock(w,t.x,Math.floor(t.y),t.z),0);
 });
