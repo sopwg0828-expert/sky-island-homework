@@ -1,0 +1,189 @@
+✖ 滑鼠：不用按住按鍵，位移就能左右轉及上下看 (1.0251ms)
+✖ 滑鼠：抬頭低頭限制角度，不會把畫面翻過來 (1.0472ms)
+✖ 空白鍵：起跳、攝影機一起上升，最後落回地面 (0.2959ms)
+✖ 空白鍵：空中不能再次起跳，按住不會一直連跳 (53.6818ms)
+✖ 空白鍵：跳起碰到上方方塊時不會穿過天花板 (1.389ms)
+✖ 河流：踩到水面後沿下游移動，不能用走路或跳躍逆流逃脫 (3.7748ms)
+✖ 河流：沿下游沖出島外，掉入虛空後地形與位置重新開始 (4.3433ms)
+✖ 河流：在河流上方跳過時，腳還沒碰水就不會被沖走 (1.5677ms)
+✔ STEP 1：短點擊 0.1 秒不挖掉方塊 (1.2327ms)
+✔ STEP 1：泥土持續挖 0.8 秒才消失，進度會逐漸增加 (0.3728ms)
+✔ STEP 1：放開後裂痕進度歸零，再挖必須重新計時 (0.2315ms)
+✖ 使用者新規格：石頭挖兩秒不碎，持續挖滿十秒才消失 (52.9857ms)
+✔ STEP 1：換目標會從頭挖，不共用進度 (0.5391ms)
+✔ STEP 1：離開可挖距離或對著空氣，不能挖掘並清除進度 (0.5313ms)
+✔ STEP 1：同一格只回傳一次挖掉事件 (0.5604ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 6
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 190.704
+
+✖ failing tests:
+
+test at tests\controls.test.mjs:8:1
+✖ 滑鼠：不用按住按鍵，位移就能左右轉及上下看 (1.0251ms)
+  Error: 滑鼠移動視角尚未實作
+      at lookFromMovement (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/view.js:1:42)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/controls.test.mjs:9:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at tests\controls.test.mjs:13:1
+✖ 滑鼠：抬頭低頭限制角度，不會把畫面翻過來 (1.0472ms)
+  Error: 滑鼠移動視角尚未實作
+      at lookFromMovement (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/view.js:1:42)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/controls.test.mjs:14:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests\controls.test.mjs:17:1
+✖ 空白鍵：起跳、攝影機一起上升，最後落回地面 (0.2959ms)
+  Error: 跳躍時攝影機連動尚未實作
+      at cameraFromPlayer (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/view.js:2:42)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/controls.test.mjs:18:41)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests\controls.test.mjs:24:1
+✖ 空白鍵：空中不能再次起跳，按住不會一直連跳 (53.6818ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(p.y>1)
+  
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/controls.test.mjs:28:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\controls.test.mjs:32:1
+✖ 空白鍵：跳起碰到上方方塊時不會穿過天花板 (1.389ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(highest>1)
+  
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/controls.test.mjs:36:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\controls.test.mjs:39:1
+✖ 河流：踩到水面後沿下游移動，不能用走路或跳躍逆流逃脫 (3.7748ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - true
+  
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/controls.test.mjs:41:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\controls.test.mjs:44:1
+✖ 河流：沿下游沖出島外，掉入虛空後地形與位置重新開始 (4.3433ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/controls.test.mjs:48:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\controls.test.mjs:51:1
+✖ 河流：在河流上方跳過時，腳還沒碰水就不會被沖走 (1.5677ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - false
+  
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/controls.test.mjs:53:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\step1.test.mjs:21:1
+✖ 使用者新規格：石頭挖兩秒不碎，持續挖滿十秒才消失 (52.9857ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(world.blocks.has('2,2,2'))
+  
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step1.test.mjs:22:66)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
