@@ -18,9 +18,9 @@ test('STEP 1：放開後裂痕進度歸零，再挖必須重新計時',()=>{
   advanceMining(world,state,target,false,.01);assert.equal(state.mining.progress,0);
   hold(world,state,target,.4);assert.ok(world.blocks.has('2,2,2'));
 });
-test('使用者新規格：石頭挖兩秒不碎，持續挖滿十秒才消失',()=>{
-  const {world,state}=setup(3);hold(world,state,target,2);assert.ok(world.blocks.has('2,2,2'));
-  hold(world,state,target,7.9);assert.ok(world.blocks.has('2,2,2'));
+test('使用者新規格：石頭挖不到兩秒不碎，持續挖滿兩秒才消失',()=>{
+  const {world,state}=setup(3);hold(world,state,target,1);assert.ok(world.blocks.has('2,2,2'));
+  hold(world,state,target,.9);assert.ok(world.blocks.has('2,2,2'));
   const broken=hold(world,state,target,.1);assert.equal(world.blocks.has('2,2,2'),false);assert.equal(broken.type,3);
 });
 test('STEP 1：換目標會從頭挖，不共用進度',()=>{

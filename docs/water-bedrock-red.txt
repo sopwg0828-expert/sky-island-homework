@@ -1,0 +1,157 @@
+✔ STEP 1：短點擊 0.1 秒不挖掉方塊 (1.2046ms)
+✔ STEP 1：泥土持續挖 0.8 秒才消失，進度會逐漸增加 (0.3373ms)
+✔ STEP 1：放開後裂痕進度歸零，再挖必須重新計時 (0.3045ms)
+✖ 使用者新規格：石頭挖不到兩秒不碎，持續挖滿兩秒才消失 (1.1939ms)
+✔ STEP 1：換目標會從頭挖，不共用進度 (0.2819ms)
+✔ STEP 1：離開可挖距離或對著空氣，不能挖掘並清除進度 (0.4391ms)
+✔ STEP 1：同一格只回傳一次挖掉事件 (0.3349ms)
+✖ 兩座島每一柱最底格都是基岩，上方仍有草泥石 (8.5044ms)
+✖ 基岩長按三十秒也不裂、不消失、不產生挖掉事件 (1.238ms)
+✖ 水有可見厚度，不是薄片，河流來源有立體水 (0.5247ms)
+✖ 水隨時間落下並向空洞散開，不向上爬 (0.3792ms)
+✖ 挖掉河岸擋牆後水改道，放回牆後該格不再有水 (0.4046ms)
+✖ 水不能穿過基岩，所有流動格都維持在32立方範圍 (0.8463ms)
+✖ 瀑布在垂直空洞中形成相接的水方塊 (0.3829ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 6
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 149.9965
+
+✖ failing tests:
+
+test at tests\step1.test.mjs:21:1
+✖ 使用者新規格：石頭挖不到兩秒不碎，持續挖滿兩秒才消失 (1.1939ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step1.test.mjs:24:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\water-bedrock.test.mjs:12:1
+✖ 兩座島每一柱最底格都是基岩，上方仍有草泥石 (8.5044ms)
+  AssertionError [ERR_ASSERTION]: 島底 1,7,13
+  
+  2 !== 4
+  
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:16:42)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 4,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\water-bedrock.test.mjs:19:1
+✖ 基岩長按三十秒也不裂、不消失、不產生挖掉事件 (1.238ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + {
+  +   type: 4,
+  +   x: 2,
+  +   y: 2,
+  +   z: 2
+  + }
+  - null
+  
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:21:32)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { x: 2, y: 2, z: 2, type: 4 },
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\water-bedrock.test.mjs:24:1
+✖ 水有可見厚度，不是薄片，河流來源有立體水 (0.5247ms)
+  Error: 尚未實作水流初始化
+      at initWater (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/water.js:1:35)
+      at basin (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:9:29)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:25:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests\water-bedrock.test.mjs:28:1
+✖ 水隨時間落下並向空洞散開，不向上爬 (0.3792ms)
+  Error: 尚未實作水流初始化
+      at initWater (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/water.js:1:35)
+      at basin (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:9:29)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:29:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests\water-bedrock.test.mjs:33:1
+✖ 挖掉河岸擋牆後水改道，放回牆後該格不再有水 (0.4046ms)
+  Error: 尚未實作水流初始化
+      at initWater (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/water.js:1:35)
+      at basin (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:9:29)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:34:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests\water-bedrock.test.mjs:39:1
+✖ 水不能穿過基岩，所有流動格都維持在32立方範圍 (0.8463ms)
+  Error: 尚未實作水流初始化
+      at initWater (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/water.js:1:35)
+      at basin (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:9:29)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:40:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests\water-bedrock.test.mjs:45:1
+✖ 瀑布在垂直空洞中形成相接的水方塊 (0.3829ms)
+  Error: 尚未實作水流初始化
+      at initWater (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/water.js:1:35)
+      at basin (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:9:29)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/water-bedrock.test.mjs:46:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
