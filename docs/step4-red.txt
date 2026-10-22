@@ -1,0 +1,112 @@
+✖ STEP 4：在相鄰空格放出所選材料並扣一，不覆蓋原方塊 (3.4546ms)
+✖ STEP 4：數字為零不能放置，也不能變成負數 (0.2299ms)
+✖ STEP 4：已有方塊的位置不可覆蓋，數量保持不變 (0.137ms)
+✖ STEP 4：不可把方塊放進玩家身體裡 (0.1314ms)
+✖ STEP 4：32³ 範圍外不能放置也不扣材料 (0.1741ms)
+✖ STEP 4：太遠、沒有目標或不是相鄰面的請求不能放置 (0.1817ms)
+✖ STEP 4：選另一種材料，只扣該種類的數字 (0.1161ms)
+✖ STEP 4：完整挖→掉→撿→放，材料數量回到原本 N (0.9512ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 0
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 147.594
+
+✖ failing tests:
+
+test at tests\step4.test.mjs:7:1
+✖ STEP 4：在相鄰空格放出所選材料並扣一，不覆蓋原方塊 (3.4546ms)
+  Error: STEP 4 放置方塊尚未實作
+      at placeBlock (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:1:36)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step4.test.mjs:8:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at tests\step4.test.mjs:11:1
+✖ STEP 4：數字為零不能放置，也不能變成負數 (0.2299ms)
+  Error: STEP 4 放置方塊尚未實作
+      at placeBlock (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:1:36)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step4.test.mjs:13:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests\step4.test.mjs:15:1
+✖ STEP 4：已有方塊的位置不可覆蓋，數量保持不變 (0.137ms)
+  Error: STEP 4 放置方塊尚未實作
+      at placeBlock (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:1:36)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step4.test.mjs:17:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests\step4.test.mjs:19:1
+✖ STEP 4：不可把方塊放進玩家身體裡 (0.1314ms)
+  Error: STEP 4 放置方塊尚未實作
+      at placeBlock (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:1:36)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step4.test.mjs:20:44)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests\step4.test.mjs:22:1
+✖ STEP 4：32³ 範圍外不能放置也不扣材料 (0.1741ms)
+  Error: STEP 4 放置方塊尚未實作
+      at placeBlock (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:1:36)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step4.test.mjs:24:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests\step4.test.mjs:26:1
+✖ STEP 4：太遠、沒有目標或不是相鄰面的請求不能放置 (0.1817ms)
+  Error: STEP 4 放置方塊尚未實作
+      at placeBlock (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:1:36)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step4.test.mjs:28:101)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests\step4.test.mjs:31:1
+✖ STEP 4：選另一種材料，只扣該種類的數字 (0.1161ms)
+  Error: STEP 4 放置方塊尚未實作
+      at placeBlock (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:1:36)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step4.test.mjs:33:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests\step4.test.mjs:35:1
+✖ STEP 4：完整挖→掉→撿→放，材料數量回到原本 N (0.9512ms)
+  Error: STEP 4 放置方塊尚未實作
+      at placeBlock (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/placement.js:1:36)
+      at TestContext.<anonymous> (file:///C:/Users/User/Documents/ChatGPT/%E7%A9%BA%E4%B8%AD%E4%B9%8B%E5%B3%B6/tests/step4.test.mjs:40:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
