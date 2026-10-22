@@ -52,3 +52,8 @@ test('原始河道低於河岸，未挖河岸時不淹到出生點',()=>{
   assert.equal(w.water.has('14,10,21'),false);
   for(const t of w.river)assert.equal(getBlock(w,t.x,Math.floor(t.y),t.z),0);
 });
+test('山坡落差的河岸也能擋水，不會從上游側面漫到草地',()=>{
+  const w=createWorld();run(w,100);
+  assert.equal(w.water.has('14,10,20'),false);
+  assert.equal(w.water.has('14,10,18'),false);
+});
